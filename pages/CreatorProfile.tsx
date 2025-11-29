@@ -13,9 +13,10 @@ interface CreatorProfileProps {
   username: string;
   onNavigateToCampaign: (slug: string) => void;
   onBack?: () => void;
+  onLogin?: () => void;
 }
 
-export const CreatorProfile: React.FC<CreatorProfileProps> = ({ username, onNavigateToCampaign, onBack }) => {
+export const CreatorProfile: React.FC<CreatorProfileProps> = ({ username, onNavigateToCampaign, onBack, onLogin }) => {
   const toast = useToast();
   const [creator, setCreator] = useState<User | null>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -52,7 +53,11 @@ export const CreatorProfile: React.FC<CreatorProfileProps> = ({ username, onNavi
 
   const handleSubscribe = async () => {
       if (!viewerId) {
-          toast.info("Faça login como Fã para assinar.");
+          if (onLogin) {
+              onLogin();
+          } else {
+              toast.info("Faça login como Fã para assinar.");
+          }
           return;
       }
       if (!creator || !creator.lootPassConfig) return;
