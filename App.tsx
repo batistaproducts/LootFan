@@ -64,8 +64,8 @@ function App() {
         const checkSession = async () => {
             try {
                 const sessionPromise = supabase.auth.getSession();
-                // Aumentado para 10s para conexões lentas
-                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000));
+                // Timeout reduzido para 4s para melhorar percepção de performance
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 4000));
 
                 const response: any = await Promise.race([sessionPromise, timeoutPromise]);
 
