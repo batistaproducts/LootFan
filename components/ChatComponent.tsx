@@ -11,10 +11,9 @@ interface ChatComponentProps {
   currentUser: User;
   otherUserName: string; // O nome da outra pessoa no chat
   isOpen: boolean;
-  readOnly?: boolean; // Novo: Bloqueia interação se true
 }
 
-export const ChatComponent: React.FC<ChatComponentProps> = ({ contextId, contextType, currentUser, otherUserName, isOpen, readOnly = false }) => {
+export const ChatComponent: React.FC<ChatComponentProps> = ({ contextId, contextType, currentUser, otherUserName, isOpen }) => {
   const toast = useToast();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -57,7 +56,6 @@ export const ChatComponent: React.FC<ChatComponentProps> = ({ contextId, context
 
   // Regra de Bloqueio Visual para o Fã
   const canSend = () => {
-      if (readOnly) return false;
       if (currentUser.role === UserRole.CREATOR) return true;
       if (currentUser.role === UserRole.FAN) {
           if (messages.length === 0 && contextType === 'DELIVERY') return false; // Creator starts delivery chat
@@ -104,34 +102,27 @@ export const ChatComponent: React.FC<ChatComponentProps> = ({ contextId, context
         </div>
 
         {/* Input Area */}
-        {readOnly ? (
-            <div className="p-3 bg-slate-100 border-t border-slate-200 text-center text-slate-500 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
-                Atendimento Encerrado
-            </div>
-        ) : (
-            <div className="p-3 bg-white border-t border-slate-200">
-                {isBlocked ? (
-                    <div className="text-center p-2 bg-yellow-50 text-yellow-700 text-xs rounded border border-yellow-200">
-                        Aguarde a resposta de {otherUserName} para enviar outra mensagem.
-                    </div>
-                ) : (
-                    <div className="flex gap-2">
-                        <input 
-                            type="text" 
-                            className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none"
-                            placeholder="Digite sua mensagem..."
-                            value={newMessage}
-                            onChange={e => setNewMessage(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && handleSend()}
-                        />
-                        <Button size="sm" onClick={handleSend} isLoading={sending}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.126A59.768 59.768 0 0 1 21.485 12 59.77 59.77 0 0 1 3.27 20.876L5.999 12Zm0 0h7.5" /></svg>
-                        </Button>
-                    </div>
-                )}
-            </div>
-        )}
+        <div className="p-3 bg-white border-t border-slate-200">
+             {isBlocked ? (
+                 <div className="text-center p-2 bg-yellow-50 text-yellow-700 text-xs rounded border border-yellow-200">
+                     Aguarde a resposta de {otherUserName} para enviar outra mensagem.
+                 </div>
+             ) : (
+                 <div className="flex gap-2">
+                     <input 
+                        type="text" 
+                        className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none"
+                        placeholder="Digite sua mensagem..."
+                        value={newMessage}
+                        onChange={e => setNewMessage(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && handleSend()}
+                     />
+                     <Button size="sm" onClick={handleSend} isLoading={sending}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.126A59.768 59.768 0 0 1 21.485 12 59.77 59.77 0 0 1 3.27 20.876L5.999 12Zm0 0h7.5" /></svg>
+                     </Button>
+                 </div>
+             )}
+        </div>
     </div>
   );
 };

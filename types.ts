@@ -45,31 +45,6 @@ export interface PersonalData {
   company?: CompanyData;
 }
 
-export interface LootPassConfig {
-    isEnabled: boolean;
-    title: string;
-    description: string;
-    price: number;
-    coverUrl?: string;
-    perks: string[]; // Lista de benefícios (texto)
-}
-
-export interface Subscription {
-    id: string;
-    fanId: string;
-    creatorId: string;
-    creatorName?: string; // Helper
-    creatorUsername?: string; // Helper
-    creatorAvatar?: string; // Helper
-    passTitle?: string; // Helper (Snapshot ou join)
-    passCover?: string; // Helper
-    status: 'ACTIVE' | 'CANCELLED' | 'PAST_DUE';
-    currentPeriodEnd: string;
-    xp: number;
-    level: number;
-    nextLevelXp: number; // Calculado no front/back
-}
-
 export interface User {
   id: string;
   name: string;
@@ -88,9 +63,6 @@ export interface User {
 
   // Dados Pessoais Sensíveis (LGPD - Armazenado em personal_info)
   personalData?: PersonalData;
-
-  // Configuração do LootPass (Apenas Creators)
-  lootPassConfig?: LootPassConfig;
 }
 
 export enum PrizeType {
@@ -127,7 +99,6 @@ export interface Campaign {
   pricePerSpin: number;
   isActive: boolean;
   hasAdultContent: boolean; // Flag para conteúdo +18 específico da campanha
-  isLootPassOnly: boolean; // Flag para exclusividade de assinantes
   prizes: Prize[];
   totalSpins: number;
   totalRevenue: number;
@@ -148,14 +119,13 @@ export interface Transaction {
   campaignId: string; // Adicionado para filtro
   campaignTitle?: string; // Adicionado para exibição em detalhes
   date: string;
-  fanId: string; // Adicionado para Analytics
   fanName: string; // Anonimizado na view pública
   prizeWon: string;
   amountPaid: number;
   platformFee: number;
   creatorNet: number;
   status?: 'PENDING' | 'PAID' | 'FAILED';
-  transactionType?: 'SPIN' | 'CREDIT_PURCHASE' | 'SUBSCRIPTION'; // Adicionado SUBSCRIPTION
+  transactionType?: 'SPIN' | 'CREDIT_PURCHASE'; // Novo: Diferencia uso de crédito de compra
   
   // Snapshot do Prêmio (Para histórico do Fã)
   prizeType?: PrizeType;
@@ -223,31 +193,6 @@ export interface CampaignBalance {
     campaignSlug: string;
     creatorName: string;
     balance: number;
-}
-
-// --- ANALYTICS TYPES ---
-export interface MonthlyMetric {
-    month: string; // "Jan", "Fev"
-    revenue: number;
-    spins: number;
-}
-
-export interface TopFan {
-    fanId: string;
-    fanName: string;
-    totalSpent: number;
-    totalSpins: number;
-    lastPurchase: string;
-}
-
-export interface AnalyticsData {
-    retentionRate: number; // %
-    ltv: number; // Lifetime Value Médio
-    churnRate: number; // % (100 - Retention de quem não voltou em 30 dias)
-    totalFans: number;
-    repeatFans: number;
-    monthlyHistory: MonthlyMetric[];
-    topFans: TopFan[];
 }
 
 export const SUPPORT_ISSUES = [

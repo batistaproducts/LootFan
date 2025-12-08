@@ -11,7 +11,6 @@ interface FanViewProps {
   onLogin: () => void;
   mode?: 'real' | 'test'; 
   onBack?: () => void;
-  onNavigateToProfile?: (username: string) => void;
 }
 
 interface VisualSlice {
@@ -31,7 +30,7 @@ const LootFanSymbol = {
     isBonus: true
 };
 
-export const FanView: React.FC<FanViewProps> = ({ campaignSlug, user, onLogin, mode = 'real', onBack, onNavigateToProfile }) => {
+export const FanView: React.FC<FanViewProps> = ({ campaignSlug, user, onLogin, mode = 'real', onBack }) => {
   const toast = useToast();
   const [campaign, setCampaign] = useState<Campaign | undefined>(undefined);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -353,15 +352,11 @@ export const FanView: React.FC<FanViewProps> = ({ campaignSlug, user, onLogin, m
   // AGE GATE
   if (mode === 'real' && campaign.hasAdultContent && !ageVerified && !user?.isAdult) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in zoom-in-95">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
         <div className="max-w-md w-full bg-white shadow-2xl p-8 rounded-2xl text-center border-t-4 border-red-500">
           <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4"><span className="text-2xl font-bold text-red-600">18+</span></div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Conteúdo Sensível</h2>
-          <p className="text-slate-500 mb-8 leading-relaxed text-sm">
-              O creator marcou esta campanha como material adulto/sensível. 
-              As imagens são protegidas para evitar exibição indiscriminada.
-              Ao prosseguir, você declara ter mais de 18 anos.
-          </p>
+          <p className="text-slate-500 mb-8 leading-relaxed">O creator marcou esta campanha como material adulto. Ao prosseguir, você declara ter mais de 18 anos.</p>
           <div className="flex flex-col gap-3">
              <Button variant="danger" onClick={() => setAgeVerified(true)} className="w-full">Tenho +18 Anos</Button>
              <Button variant="secondary" onClick={onBack ? onBack : () => window.history.back()} className="w-full">Voltar</Button>
@@ -455,24 +450,8 @@ export const FanView: React.FC<FanViewProps> = ({ campaignSlug, user, onLogin, m
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex flex-col items-center bg-slate-50 pb-20 relative">
+    <div className="min-h-[calc(100vh-64px)] flex flex-col items-center bg-slate-50 pb-20">
       
-      {/* Botão Voltar ao Perfil (Real Mode Only) */}
-      {mode === 'real' && campaign?.creatorUsername && onNavigateToProfile && (
-          <button 
-              onClick={() => onNavigateToProfile(campaign.creatorUsername!)}
-              className="absolute top-4 left-4 z-30 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm border border-slate-200 text-slate-500 hover:text-brand-600 hover:border-brand-300 transition-all group"
-              title="Voltar ao Perfil do Creator"
-          >
-              <div className="flex items-center gap-2 px-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 group-hover:-translate-x-1 transition-transform">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                  </svg>
-                  <span className="text-xs font-bold hidden sm:inline">Perfil</span>
-              </div>
-          </button>
-      )}
-
       {mode === 'test' && (
           <div className="w-full bg-amber-400 text-amber-950 px-4 py-3 shadow-md sticky top-16 z-40 flex items-center justify-between">
               <div className="flex items-center gap-2 font-bold"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" /></svg><span>MODO DE SIMULAÇÃO</span></div>
@@ -482,10 +461,7 @@ export const FanView: React.FC<FanViewProps> = ({ campaignSlug, user, onLogin, m
 
       <div className="w-full bg-white border-b border-slate-200 pb-12 pt-8 mb-8 shadow-sm relative z-10">
         <div className="flex flex-col items-center justify-center">
-            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                {campaign.title}
-                {campaign.hasAdultContent && <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded border border-red-200">+18</span>}
-            </h1>
+            <h1 className="text-2xl font-bold text-slate-900">{campaign.title}</h1>
             <p className="text-brand-600 font-medium bg-brand-50 px-3 py-0.5 rounded-full mt-2 text-sm">@{campaign.creatorUsername || 'creator'}</p>
         </div>
       </div>
@@ -600,26 +576,13 @@ export const FanView: React.FC<FanViewProps> = ({ campaignSlug, user, onLogin, m
          </div>
       )}
 
-      {/* Lista de Prêmios (Itens Possíveis) */}
+      {/* Lista de Prêmios (Existing) */}
       <div className="max-w-3xl w-full px-6">
          <h3 className="text-xl font-bold text-slate-800 mb-4">Itens Possíveis</h3>
          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {campaign.prizes.map(prize => (
-               <div key={prize.id} className="flex items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 group relative overflow-hidden">
-                  <div 
-                    className={`w-16 h-16 bg-slate-100 rounded-lg bg-cover bg-center shrink-0 border border-slate-100 transition-all duration-300 ${campaign.hasAdultContent ? 'blur-sm group-hover:blur-0 cursor-pointer' : ''}`}
-                    style={{backgroundImage: prize.imageUrl ? `url(${prize.imageUrl})` : undefined}}
-                  >
-                      {/* Se for 18+ e não tiver hover, pode colocar um icone de olho fechado ou similar, mas o blur resolve */}
-                  </div>
-                  
-                  {/* Dica visual para +18 */}
-                  {campaign.hasAdultContent && (
-                      <div className="absolute top-2 left-2 w-4 h-4 bg-black/50 rounded-full flex items-center justify-center group-hover:hidden pointer-events-none z-10">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-2.5 h-2.5 text-white"><path fillRule="evenodd" d="M3.25 4A2.25 2.25 0 0 0 1 6.25v7.5A2.25 2.25 0 0 0 3.25 16h7.5A2.25 2.25 0 0 0 13 13.75v-7.5A2.25 2.25 0 0 0 10.75 4h-7.5ZM19 4.75a.75.75 0 0 0-1.28-.53l-3 3a.75.75 0 0 0-.22.53v4.5c0 .199.079.39.22.53l3 3a.75.75 0 0 0 1.28-.53V4.75Z" clipRule="evenodd" /></svg>
-                      </div>
-                  )}
-
+               <div key={prize.id} className="flex items-center gap-4 bg-white p-4 rounded-xl border border-slate-200">
+                  <div className="w-16 h-16 bg-slate-100 rounded-lg bg-cover bg-center shrink-0 border border-slate-100" style={{backgroundImage: prize.imageUrl ? `url(${prize.imageUrl})` : undefined}}></div>
                   <div className="flex-1 min-w-0">
                      <p className="text-slate-900 font-semibold truncate">{prize.name}</p>
                      <p className="text-xs text-slate-500 font-medium">Chance: {prize.probability}%</p>

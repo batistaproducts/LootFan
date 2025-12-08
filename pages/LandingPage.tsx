@@ -44,7 +44,8 @@ export const LandingPage: React.FC<LandingProps> = ({ onOpenAuth }) => {
           </h1>
           
           <p className="mx-auto max-w-2xl text-lg leading-8 text-slate-600 mb-10">
-            A plataforma definitiva para Creators (Gamers, Educadores, Artistas e +) venderem <strong>conteúdos exclusivos</strong> e experiências digitais através de caixas surpresa, assinaturas e mercado secundário.
+            A plataforma definitiva para Creators (Gamers, Educadores, Artistas e +) venderem <strong>conteúdos exclusivos</strong> e experiências digitais através de caixas surpresa.
+            Engajamento garantido e justo para todos.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -106,61 +107,8 @@ export const LandingPage: React.FC<LandingProps> = ({ onOpenAuth }) => {
         </div>
       </section>
 
-      {/* NEW SECTION: BUSINESS MODELS */}
-      <section className="w-full bg-white py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-          <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
-              <div className="text-center mb-16">
-                  <span className="text-brand-600 font-bold uppercase tracking-wider text-sm bg-brand-50 px-3 py-1 rounded-full border border-brand-100">Ecossistema Completo</span>
-                  <h2 className="text-3xl font-extrabold text-slate-900 mt-4 sm:text-5xl">3 Motores de Receita</h2>
-                  <p className="mt-4 text-lg text-slate-500 max-w-2xl mx-auto">Não dependa de apenas uma fonte. O LootFan oferece um conjunto de ferramentas para maximizar o LTV (Lifetime Value) do seu fã.</p>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {/* Card 1: Loot Drops */}
-                  <div className="bg-slate-50 rounded-3xl p-8 border border-slate-200 flex flex-col h-full hover:border-brand-300 transition-colors">
-                      <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm mb-6 border border-slate-100">🎲</div>
-                      <h3 className="text-2xl font-bold text-slate-900 mb-2">Loot Drops</h3>
-                      <p className="text-slate-500 mb-6 flex-1">O modelo clássico. Venda caixas surpresa com produtos digitais ou físicos. Ideal para lançamentos, queima de estoque e engajamento rápido.</p>
-                      <ul className="space-y-2 mb-8">
-                          <li className="flex items-center gap-2 text-sm text-slate-700 font-medium"><span className="text-green-500">✓</span> Vendas Imediatas</li>
-                          <li className="flex items-center gap-2 text-sm text-slate-700 font-medium"><span className="text-green-500">✓</span> Gamificação Viciante</li>
-                      </ul>
-                  </div>
-
-                  {/* Card 2: Loot Pass (NEW) */}
-                  <div className="bg-slate-900 rounded-3xl p-8 border border-slate-800 flex flex-col h-full relative overflow-hidden group shadow-2xl">
-                      <div className="absolute top-0 right-0 bg-yellow-500 text-yellow-950 text-xs font-bold px-3 py-1 rounded-bl-xl">NOVO</div>
-                      <div className="absolute inset-0 bg-gradient-to-br from-brand-900/50 to-purple-900/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      
-                      <div className="relative z-10 flex flex-col h-full">
-                          <div className="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center text-3xl shadow-inner mb-6 border border-slate-700 text-yellow-400">👑</div>
-                          <h3 className="text-2xl font-bold text-white mb-2">Loot Pass</h3>
-                          <p className="text-slate-400 mb-6 flex-1">Crie seu clube de assinatura VIP. Fãs pagam mensalmente para ter acesso a drops exclusivos, descontos e progressão de nível estilo "Battle Pass".</p>
-                          <ul className="space-y-2 mb-8">
-                              <li className="flex items-center gap-2 text-sm text-slate-300 font-medium"><span className="text-yellow-500">★</span> Receita Recorrente (MRR)</li>
-                              <li className="flex items-center gap-2 text-sm text-slate-300 font-medium"><span className="text-yellow-500">★</span> Fidelização Extrema</li>
-                          </ul>
-                          <Button className="w-full bg-yellow-500 text-yellow-950 hover:bg-yellow-400 border-none font-bold" onClick={() => onOpenAuth(UserRole.CREATOR)}>Criar meu Clube</Button>
-                      </div>
-                  </div>
-
-                  {/* Card 3: Marketplace (NEW) */}
-                  <div className="bg-slate-50 rounded-3xl p-8 border border-slate-200 flex flex-col h-full hover:border-brand-300 transition-colors">
-                      <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm mb-6 border border-slate-100">🤝</div>
-                      <h3 className="text-2xl font-bold text-slate-900 mb-2">Marketplace</h3>
-                      <p className="text-slate-500 mb-6 flex-1">Permita que seus fãs negociem itens repetidos entre si. Você ganha royalties (taxa) em cada transação secundária realizada na plataforma.</p>
-                      <ul className="space-y-2 mb-8">
-                          <li className="flex items-center gap-2 text-sm text-slate-700 font-medium"><span className="text-brand-500">↗</span> Royalties Perpétuos</li>
-                          <li className="flex items-center gap-2 text-sm text-slate-700 font-medium"><span className="text-brand-500">↗</span> Economia Viva</li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
-      </section>
-
       {/* Calculator Section - Clean & Modern */}
-      <section id="calculator" className="w-full py-24 px-6 bg-slate-50 border-t border-slate-200">
+      <section id="calculator" className="w-full py-24 px-6 bg-white">
         <div className="mx-auto max-w-5xl">
             <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-2xl shadow-brand-900/5">
             <h2 className="text-3xl font-bold text-center mb-2 text-slate-900">Calculadora de Potencial</h2>
