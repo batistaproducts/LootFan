@@ -3,7 +3,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { Navbar } from './components/Navbar';
 import { UserRole, User } from './types';
 import { dbService } from './services/mockService';
-import { ToastProvider } from './components/Toast'; 
+import { ToastProvider, useToast } from './components/Toast'; 
 import { AuthModal } from './components/AuthModal';
 import { supabase } from './services/supabaseClient';
 
@@ -25,7 +25,7 @@ const FanPayments = React.lazy(() => import('./pages/FanPayments').then(module =
 
 type DashboardTab = 'overview' | 'editor' | 'delivery' | 'support' | 'profile' | 'personal-data';
 
-function App() {
+function AppContent() {
   // Estado Global
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentView, setCurrentView] = useState<string>('home');
@@ -42,6 +42,15 @@ function App() {
   const [viewCampaignSlug, setViewCampaignSlug] = useState<string | null>(null);
   
   const [isLoading, setIsLoading] = useState(true);
+  const toast = useToast();
+
+  const handleLogout = () => {
+    dbService.logout();
+    setCurrentUser(null);
+    setCurrentView('home');
+    setViewProfileUsername(null);
+    setViewCampaignSlug(null);
+  };
 
   // Persistence Listener
   useEffect(() => {
@@ -49,7 +58,8 @@ function App() {
     const checkSession = async () => {
        try {
            const sessionPromise = supabase.auth.getSession();
-           const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
+           // Aumentado para 10 segundos para ser mais resiliente
+           const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000));
 
            const response: any = await Promise.race([sessionPromise, timeoutPromise]);
            
@@ -63,10 +73,16 @@ function App() {
                      if (user.role === UserRole.CREATOR) setCurrentView('dashboard');
                      if (user.role === UserRole.FAN) setCurrentView('fan-home');
                   }
+               } else {
+                  // **CIRCUIT BREAKER**
+                  // Se o usuário está autenticado mas não tem perfil, força o logout para quebrar o loop.
+                  console.warn(`Sessão ativa encontrada para user ${session.user.id}, mas o perfil não existe no banco. Forçando logout.`);
+                  toast.error("Sua sessão está inconsistente. Por favor, faça login novamente.");
+                  handleLogout();
                }
            }
        } catch (error) {
-           console.error("Erro ou timeout na inicialização da sessão:", error);
+           console.warn("Erro ou timeout na inicialização da sessão:", error); // Alterado para warn para não parecer um erro fatal
        } finally {
            setIsLoading(false);
        }
@@ -77,7 +93,14 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
              const user = await dbService.getUserProfile(session.user.id);
-             if (user) setCurrentUser(user);
+             if (user) {
+                setCurrentUser(user);
+             } else {
+                // **CIRCUIT BREAKER**
+                console.warn(`[AuthState] Sessão ativa sem perfil correspondente. Forçando logout.`);
+                toast.error("Falha ao carregar seu perfil. Tente fazer login novamente.");
+                handleLogout();
+             }
         } else if (event === 'SIGNED_OUT') {
              setCurrentUser(null);
              setCurrentView('home');
@@ -107,14 +130,6 @@ function App() {
           setCurrentView('admin');
       }
       setAuthModalOpen(false);
-  };
-
-  const handleLogout = () => {
-    dbService.logout();
-    setCurrentUser(null);
-    setCurrentView('home');
-    setViewProfileUsername(null);
-    setViewCampaignSlug(null);
   };
 
   const navigateToProfile = (username: string) => {
@@ -259,7 +274,6 @@ function App() {
   };
 
   return (
-    <ToastProvider>
       <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-brand-200 selection:text-brand-900">
         <Navbar 
           currentUserRole={currentUser?.role || UserRole.GUEST} 
@@ -287,6 +301,13 @@ function App() {
             </footer>
         )}
       </div>
+  );
+}
+
+function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
     </ToastProvider>
   );
 }
